@@ -43,6 +43,7 @@ public class IngredientServiceImpl implements IngredientService {
             //todo impl error handling
             log.error("recipe id not found. Id: " + recipeId);
         }
+        
 
         Recipe recipe = recipeOptional.get();
 
@@ -54,12 +55,16 @@ public class IngredientServiceImpl implements IngredientService {
             //todo impl error handling
             log.error("Ingredient id not found: " + ingredientId);
         }
+        
+      //enhance command object with recipe id
+        IngredientCommand ingredientCommand = ingredientCommandOptional.get();
+        ingredientCommand.setRecipeId(recipeId);
 
         return ingredientCommandOptional.get();
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public IngredientCommand saveIngredientCommand(IngredientCommand command) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(command.getRecipeId());
 
@@ -108,7 +113,13 @@ public class IngredientServiceImpl implements IngredientService {
             }
 
             //to do check for fail
-            return ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+            
+            
+            //enhance with id value
+            IngredientCommand ingredientCommandSaved = ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+            ingredientCommandSaved.setRecipeId(recipe.getId());
+            
+            return ingredientCommandSaved;
         }
 
     }
